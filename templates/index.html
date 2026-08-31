@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AI Customer Support Ticket Classifier</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', path='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+    <div class="container">
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="page-header">
+
+            <div class="header-badge">
+                <span class="status-dot"></span>
+                AI SUPPORT INTELLIGENCE
+            </div>
+
+            <h1>
+                AI Customer Support
+                <span>Ticket Classifier</span>
+            </h1>
+
+            <p class="subtitle">
+                Automatically classify customer tickets,
+                determine priority, and route them to the
+                appropriate support department.
+            </p>
+
+        </header>
+
+
+        <!-- =================================================
+             TICKET INPUT
+        ================================================== -->
+
+        <section class="ticket-card">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>Submit Support Ticket</h2>
+
+                    <p>
+                        Describe the customer's issue below.
+                    </p>
+                </div>
+
+                <div class="ai-badge">
+                    ✦ AI Powered
+                </div>
+
+            </div>
+
+
+            <form method="post"
+                  action="/classify"
+                  class="ticket-form">
+
+                <label for="ticket">
+                    Customer Message
+                </label>
+
+                <textarea
+                    id="ticket"
+                    name="ticket"
+                    placeholder="Example: I was charged twice for my order and I need a refund..."
+                    required
+                >{% if ticket %}{{ ticket }}{% endif %}</textarea>
+
+
+                <div class="form-footer">
+
+                    <span class="character-hint">
+                        Enter a clear description of the problem
+                    </span>
+
+                    <button type="submit">
+
+                        <span>Analyze Ticket</span>
+
+                        <span class="button-arrow">
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================================
+             ERROR
+        ================================================== -->
+
+        {% if error %}
+
+        <div class="error-message">
+
+            <span>⚠</span>
+
+            {{ error }}
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             AI ANALYSIS
+        ================================================== -->
+
+        {% if result %}
+
+        <section class="analysis-section">
+
+            <div class="analysis-title">
+
+                <div>
+
+                    <div class="header-badge">
+                        <span class="status-dot"></span>
+                        ANALYSIS COMPLETE
+                    </div>
+
+                    <h2>
+                        AI Analysis
+                    </h2>
+
+                </div>
+
+                <div class="confidence-top">
+
+                    <span>Confidence</span>
+
+                    <strong>
+                        {{ result.confidence }}%
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- RESULT CARDS -->
+
+            <div class="result-grid">
+
+
+                <!-- CATEGORY -->
+
+                <div class="result-card category-card">
+
+                    <div class="result-icon">
+                        ◈
+                    </div>
+
+                    <div class="result-content">
+
+                        <span class="result-label">
+                            CATEGORY
+                        </span>
+
+                        <strong class="result-value">
+                            {{ result.category }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRIORITY -->
+
+                <div class="result-card priority-card">
+
+                    <div class="result-icon">
+                        !
+                    </div>
+
+                    <div class="result-content">
+
+                        <span class="result-label">
+                            PRIORITY
+                        </span>
+
+                        <strong class="result-value">
+                            {{ result.priority }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DEPARTMENT -->
+
+                <div class="result-card department-card">
+
+                    <div class="result-icon">
+                        ◎
+                    </div>
+
+                    <div class="result-content">
+
+                        <span class="result-label">
+                            DEPARTMENT
+                        </span>
+
+                        <strong class="result-value">
+                            {{ result.department }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONFIDENCE -->
+
+                <div class="result-card confidence-card">
+
+                    <div class="result-icon">
+                        ✓
+                    </div>
+
+                    <div class="result-content">
+
+                        <span class="result-label">
+                            MODEL CONFIDENCE
+                        </span>
+
+                        <strong class="result-value">
+                            {{ result.confidence }}%
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 TICKET ANALYSIS
+            ================================================== -->
+
+            <div class="ticket-result">
+
+                <div class="ticket-result-header">
+
+                    <h3>
+                        Analyzed Ticket
+                    </h3>
+
+                    <span class="ticket-status">
+                        Classified
+                    </span>
+
+                </div>
+
+                <p>
+                    {{ result.message }}
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 AI RECOMMENDATION
+            ================================================== -->
+
+            <div class="recommendation">
+
+                <div class="recommendation-icon">
+                    ✦
+                </div>
+
+                <div>
+
+                    <span class="recommendation-label">
+                        AI RECOMMENDATION
+                    </span>
+
+                    <p>
+
+                        Route this ticket to
+                        <strong>
+                            {{ result.department }}
+                        </strong>
+
+                        with
+
+                        <strong>
+                            {{ result.priority }}
+                        </strong>
+
+                        priority for faster resolution.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        {% else %}
+
+        <!-- =================================================
+             EMPTY STATE
+        ================================================== -->
+
+        <section class="empty-state">
+
+            <div class="empty-icon">
+                ✦
+            </div>
+
+            <h2>
+                Ready to Analyze
+            </h2>
+
+            <p>
+                Submit a customer support ticket above
+                and our AI model will automatically classify
+                it.
+            </p>
+
+        </section>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <footer>
+
+            <span>
+                AI Customer Support Classifier
+            </span>
+
+            <span class="footer-dot">
+                •
+            </span>
+
+            <span>
+                Powered by Machine Learning
+            </span>
+
+        </footer>
+
+    </div>
+
+
+</body>
+
+</html>
